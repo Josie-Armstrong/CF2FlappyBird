@@ -115,7 +115,8 @@ class Bird(pygame.sprite.Sprite):
 class Pipe(pygame.sprite.Sprite):
     def __init__(self, x, y, position):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('./Game Textures/Obstacles/pipe.png')
+        self.image = pygame.image.load('./Game Textures/Obstacles/level1.png')
+        self.image = pygame.transform.scale(self.image, (78, 560))
         self.rect = self.image.get_rect()
         #position 1 is from top, -1 is from bottom
         if position == 1:
