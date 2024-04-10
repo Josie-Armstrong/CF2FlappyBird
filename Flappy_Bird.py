@@ -17,10 +17,10 @@ screen = pygame.display.set_mode((screen_width,screen_height))
 pygame.display.set_caption("Flappy Bird (But Cool)")
 
 #load images
-bg = pygame.image.load('./Game Textures/new_background.png')
+bg = pygame.image.load('./Game Textures/Backgrounds/level1.png')
 bg = pygame.transform.scale(bg, (4416, 736)) # scale background image
-ground = pygame.image.load('./Game Textures/ground.png')
-button_img = pygame.image.load('./Game Textures/restart.png')
+ground = pygame.image.load('./Game Textures/Grounds/ground.png')
+button_img = pygame.image.load('./Game Textures/Buttons/restart.png')
 
 #define font
 font = pygame.font.SysFont('Times New Roman', 60)
@@ -62,7 +62,7 @@ class Bird(pygame.sprite.Sprite):
         self.index = 0
         self.counter = 0
         for num in range(1,4):
-            img = pygame.image.load(f'./Game Textures/Birds L1/bird{num}.png')
+            img = pygame.image.load(f'./Game Textures/Sprites/Birds L1/bird{num}.png')
             self.images.append(img)
         self.image = self.images[self.index]
         self.rect = self.image.get_rect()
@@ -115,7 +115,7 @@ class Bird(pygame.sprite.Sprite):
 class Pipe(pygame.sprite.Sprite):
     def __init__(self, x, y, position):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('./Game Textures/pipe.png')
+        self.image = pygame.image.load('./Game Textures/Obstacles/pipe.png')
         self.rect = self.image.get_rect()
         #position 1 is from top, -1 is from bottom
         if position == 1:
