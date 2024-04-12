@@ -62,7 +62,7 @@ class Bird(pygame.sprite.Sprite):
         self.index = 0
         self.counter = 0
         for num in range(1,4):
-            img = pygame.image.load(f'./Game Textures/Sprites/Birds L1/bird{num}.png')
+            img = pygame.image.load(f'./Game Textures/Sprites/Birds L1/coolbird{num}.png')
             self.images.append(img)
         self.image = self.images[self.index]
         self.rect = self.image.get_rect()
