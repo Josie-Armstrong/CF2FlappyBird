@@ -1,4 +1,4 @@
-import pygame, sys, random
+import pygame, sys, random, math
 from pygame.locals import *
 
 pygame.init()
@@ -17,7 +17,7 @@ screen = pygame.display.set_mode((screen_width,screen_height))
 pygame.display.set_caption("Flappy Bird (But Cool)")
 
 #load images
-bg = pygame.image.load('./Game Textures/Backgrounds/level1.png')
+bg = pygame.image.load('./Game Textures/Backgrounds/level1.png').convert()
 bg = pygame.transform.scale(bg, (4200, 700)) # scale background image
 ground = pygame.image.load('./Game Textures/Grounds/ground.png')
 button_img = pygame.image.load('./Game Textures/Buttons/restart.png')
@@ -40,6 +40,11 @@ last_pipe = pygame.time.get_ticks() - pipe_frequency
 score = 0
 pass_pipe = False
 
+# define background variables
+bg_width = bg.get_width()
+bg_tiles = 2
+bg_scroll = 0
+
 
 #drawing text
 def draw_text(text, font, text_color, x, y):
@@ -52,6 +57,7 @@ def reset_game():
     flappy.rect.x = 100
     flappy.rect.y = int(screen_height / 2)
     score = 0
+    bg_scroll = 0
     return score
 
 #create bird class
@@ -173,8 +179,19 @@ while True:
 
     clock.tick(fps)
 
-    #draw background
-    screen.blit(bg, (0,0))
+    # scrolls if game/round is going, else maintains a static background
+    if (game_over == False and flying == True):
+        # drawing the background
+        for i in range(0, bg_tiles):
+            screen.blit(bg, (i * bg_width + bg_scroll,0))
+
+        # scrolling background and resetting scroll
+        bg_scroll -= scroll_speed
+        if abs(bg_scroll) > bg_width:
+            bg_scroll = 0
+    else:
+        for i in range(0, bg_tiles):
+            screen.blit(bg, (i * bg_width + bg_scroll,0))
 
     #draw sprites to screen
     bird_group.draw(screen)
@@ -238,6 +255,7 @@ while True:
         if button.draw() == True:
             game_over = False
             score = reset_game()
+            bg_scroll = 0
 
 
     for event in pygame.event.get():
