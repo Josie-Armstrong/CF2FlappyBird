@@ -1,13 +1,10 @@
 import pygame, sys, random, math
-import Bird, Pipe
+import Bird, Pipe, RestartButton
 from pygame.locals import *
 
 pygame.init()
 clock = pygame.time.Clock()
 fps = 60
-
-
-
 
 #set screen dimensions
 screen_width = 664
@@ -138,7 +135,7 @@ def reset_game():
             self.kill()'''
 
 
-class Button():
+''' class Button():
     def __init__(self, x, y, image):
         self.image = image
         self.rect = self.image.get_rect()
@@ -158,7 +155,7 @@ class Button():
         #draw button
         screen.blit(self.image, (self.rect.x, self.rect.y))
 
-        return action
+        return action''' 
         
 #sprite groups
 bird_group = pygame.sprite.Group()
@@ -173,7 +170,7 @@ bird_group.add(flappy)
 
 
 #create restart button instance
-button = Button(screen_width // 2 - 50, screen_height // 2 - 100, button_img)
+button = RestartButton.Button(screen_width // 2 - 50, screen_height // 2 - 100, button_img, screen)
 
 #run the game
 while True:
