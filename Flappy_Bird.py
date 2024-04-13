@@ -1,4 +1,5 @@
 import pygame, sys, random, math
+import Bird, Pipe
 from pygame.locals import *
 
 pygame.init()
@@ -60,8 +61,8 @@ def reset_game():
     bg_scroll = 0
     return score
 
-#create bird class
-class Bird(pygame.sprite.Sprite):
+# Bird class - NOW IN EXTERNAL FILE
+''' class Bird(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.images =[]
@@ -115,10 +116,10 @@ class Bird(pygame.sprite.Sprite):
             self.image = self.images[self.index]
 
             #rotate the bird
-            self.image = pygame.transform.rotate(self.images[self.index], self.vel*-2)
+            self.image = pygame.transform.rotate(self.images[self.index], self.vel*-2)'''
 
-
-class Pipe(pygame.sprite.Sprite):
+# Pipe class - NOW IN EXTERNAL FILE
+''' class Pipe(pygame.sprite.Sprite):
     def __init__(self, x, y, position):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('./Game Textures/Obstacles/level1.png')
@@ -134,7 +135,7 @@ class Pipe(pygame.sprite.Sprite):
     def update(self):
         self.rect.x -= scroll_speed
         if self.rect.right < 0: #gets rid of pipes that are offscreen to save memory
-            self.kill()
+            self.kill()'''
 
 
 class Button():
@@ -164,7 +165,7 @@ bird_group = pygame.sprite.Group()
 pipe_group = pygame.sprite.Group()
 
 #sprites
-flappy = Bird(100,int(screen_height / 2))
+flappy = Bird.Bird(100,int(screen_height / 2))
 
 
 #add sprite groups 
@@ -195,7 +196,7 @@ while True:
 
     #draw sprites to screen
     bird_group.draw(screen)
-    bird_group.update()
+    bird_group.update(flying, game_over)
     pipe_group.draw(screen)
 
 
@@ -236,8 +237,8 @@ while True:
         time_now = pygame.time.get_ticks()
         if time_now - last_pipe > pipe_frequency:
             pipe_height = random.randint(-100,100) #randomize distsnce between pipes
-            btm_pipe = Pipe(screen_width, int(screen_height / 2) + pipe_height, -1)
-            top_pipe = Pipe(screen_width, int(screen_height / 2) + pipe_height, 1)
+            btm_pipe = Pipe.Pipe(screen_width, int(screen_height / 2) + pipe_height, -1, pipe_gap)
+            top_pipe = Pipe.Pipe(screen_width, int(screen_height / 2) + pipe_height, 1, pipe_gap)
             pipe_group.add(btm_pipe)
             pipe_group.add(top_pipe)
             last_pipe = time_now
@@ -247,7 +248,7 @@ while True:
         if abs(ground_scroll) > 35:
             ground_scroll = 0
             
-        pipe_group.update()
+        pipe_group.update(scroll_speed)
 
 
     #check for game over and reset
@@ -257,7 +258,7 @@ while True:
             score = reset_game()
             bg_scroll = 0
 
-
+    # check for quit event
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
