@@ -18,7 +18,7 @@ pygame.display.set_caption("Flappy Bird (But Cool)")
 
 #load images
 bg = pygame.image.load('./Game Textures/Backgrounds/level1.png')
-bg = pygame.transform.scale(bg, (4416, 736)) # scale background image
+bg = pygame.transform.scale(bg, (4200, 700)) # scale background image
 ground = pygame.image.load('./Game Textures/Grounds/ground.png')
 button_img = pygame.image.load('./Game Textures/Buttons/restart.png')
 
