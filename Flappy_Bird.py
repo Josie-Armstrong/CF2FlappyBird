@@ -202,8 +202,11 @@ while True:
     bird_group.draw(screen)
     bird_group.update(flying, game_over)
     pipe_group.draw(screen)
-    large_token_group.draw(screen)
-    small_token_group.draw(screen)
+
+    # draw tokens if level 4
+    if level == 4:
+        large_token_group.draw(screen)
+        small_token_group.draw(screen)
 
 
 
@@ -304,11 +307,7 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN and flying == False and game_over == False:
             flying = True
         if event.type == pygame.KEYDOWN:
-            if event.key == K_a:
-                flappy.sizeChange(2)
-            elif event.key == K_s:
-                flappy.sizeChange(0.5)
-            elif event.key == K_4:
+            if event.key == K_4:
                 level = 4
 
     pygame.display.update()

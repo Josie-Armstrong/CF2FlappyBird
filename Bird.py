@@ -21,6 +21,7 @@ class Bird(pygame.sprite.Sprite):
     def sizeChange(self, scale, reset = False):
         if reset == True:
             for i in range(len(self.images)):
+                self.images[i] = pygame.image.load(f'./Game Textures/Sprites/Birds L1/coolbird{i + 1}.png')
                 self.images[i] = pygame.transform.scale(self.images[i], (51,37))
         else:
             for i in range(len(self.images)):
