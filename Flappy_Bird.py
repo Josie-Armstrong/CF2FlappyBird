@@ -1,5 +1,5 @@
 import pygame, sys, random, math
-import Bird, Pipe, RestartButton
+import Bird, Pipe, RestartButton, SizeToken
 from pygame.locals import *
 
 pygame.init()
@@ -34,9 +34,12 @@ flying = False
 game_over = False
 pipe_gap = 300
 pipe_frequency = 1500 #milliseconds (1.5 sec)
+token_frequency = 800 # milliseconds, like above
 last_pipe = pygame.time.get_ticks() - pipe_frequency
+last_token = pygame.time.get_ticks() - token_frequency
 score = 0
 pass_pipe = False
+level = 1 # for changing levels
 
 # define background variables
 bg_width = bg.get_width()
@@ -52,6 +55,8 @@ def draw_text(text, font, text_color, x, y):
 #reset score
 def reset_game(): 
     pipe_group.empty()
+    large_token_group.empty()
+    small_token_group.empty()
     flappy.rect.x = 100
     flappy.rect.y = int(screen_height / 2)
     score = 0
@@ -160,6 +165,8 @@ def reset_game():
 #sprite groups
 bird_group = pygame.sprite.Group()
 pipe_group = pygame.sprite.Group()
+large_token_group = pygame.sprite.Group() # size change level
+small_token_group = pygame.sprite.Group() # size change level
 
 #sprites
 flappy = Bird.Bird(100,int(screen_height / 2))
@@ -195,6 +202,8 @@ while True:
     bird_group.draw(screen)
     bird_group.update(flying, game_over)
     pipe_group.draw(screen)
+    large_token_group.draw(screen)
+    small_token_group.draw(screen)
 
 
 
@@ -227,6 +236,19 @@ while True:
     if flappy.rect.bottom >= 618:
         game_over = True
         flying = False
+    
+    # look for token collisions, level 4 only
+    if level == 4:
+        # removing tokens that collide with pipes
+        pygame.sprite.groupcollide(large_token_group, pipe_group, True, False)
+        pygame.sprite.groupcollide(small_token_group, pipe_group, True, False)
+
+        # removing tokens that collide with bird, triggering bird changes
+        if pygame.sprite.groupcollide(large_token_group, bird_group, True, False):
+            flappy.sizeChange(1.2)
+        if pygame.sprite.groupcollide(small_token_group, bird_group, True, False):
+            flappy.sizeChange(0.8)
+
 
     #generate pipes and ground
     if game_over == False and flying == True:
@@ -239,6 +261,23 @@ while True:
             pipe_group.add(btm_pipe)
             pipe_group.add(top_pipe)
             last_pipe = time_now
+        
+
+        # generating size change tokens if level is 4
+        if level == 4:
+            if time_now - last_token > token_frequency:
+                tokeny = random.randint(100, 500)
+                tokenx = 664
+                token_type = random.randint(0,1)
+
+                token = SizeToken.Token(tokenx, tokeny, token_type)
+                
+                if token.type == "large":
+                    large_token_group.add(token)
+                elif token.type == "small":
+                    small_token_group.add(token)
+                
+                last_token = time_now
 
         #draw scrolling ground
         ground_scroll -= scroll_speed
@@ -246,7 +285,8 @@ while True:
             ground_scroll = 0
             
         pipe_group.update(scroll_speed)
-
+        large_token_group.update(scroll_speed)
+        small_token_group.update(scroll_speed)
 
     #check for game over and reset
     if game_over == True:
@@ -268,6 +308,8 @@ while True:
                 flappy.sizeChange(2)
             elif event.key == K_s:
                 flappy.sizeChange(0.5)
+            elif event.key == K_4:
+                level = 4
 
     pygame.display.update()
 
