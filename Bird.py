@@ -16,8 +16,24 @@ class Bird(pygame.sprite.Sprite):
         self.vel = 0 #bird's velocity
         self.jumped = False
         self.mid_air = False
+    
+    #for the size change level, changes size of bird and rect
+    def sizeChange(self, scale, reset = False):
+        if reset == True:
+            for i in range(len(self.images)):
+                self.images[i] = pygame.transform.scale(self.images[i], (51,37))
+        else:
+            for i in range(len(self.images)):
+                    self.images[i] = pygame.transform.scale_by(self.images[i], scale)
+        
+        centerx = self.rect.centerx
+        centery = self.rect.centery
 
-    def update(self, flying, game_over):
+        self.rect = self.images[0].get_rect()
+        self.rect.center = [centerx, centery]
+        print(self.rect.width, self.rect.height)
+
+    def update(self, flying, game_over, drinkMe = False):
 
 
         #gravity

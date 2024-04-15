@@ -254,6 +254,7 @@ while True:
             game_over = False
             score = reset_game()
             bg_scroll = 0
+            flappy.sizeChange(0, True)
 
     # check for quit event
     for event in pygame.event.get():
@@ -262,6 +263,11 @@ while True:
             sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN and flying == False and game_over == False:
             flying = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == K_a:
+                flappy.sizeChange(2)
+            elif event.key == K_s:
+                flappy.sizeChange(0.5)
 
     pygame.display.update()
 
