@@ -52,7 +52,7 @@ class Bird(pygame.sprite.Sprite):
             key = pygame.key.get_pressed()
             if key[pygame.K_SPACE] and self.jumped == False and self.mid_air == True:
                 self.jumped = True
-                self.vel = -10 
+                self.vel = -10
 
             if key[pygame.K_SPACE] == False:
                 self.jumped = False
