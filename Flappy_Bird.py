@@ -103,7 +103,7 @@ def scroll_ground():
         ground_scroll -= scroll_speed
         if abs(ground_scroll) > ground_width:
             ground_scroll = 0
-            print("ground reset")
+            # print("ground reset")
     else:
         for i in range(0, ground_tiles):
                 screen.blit(ground, (i * ground_width + ground_scroll,618))
