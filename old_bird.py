@@ -17,25 +17,18 @@ pygame.display.set_caption("Flappy Bird (But Cool)")
 #load images
 bg = pygame.image.load('./Game Textures/Backgrounds/level1.png').convert()
 bg = pygame.transform.scale(bg, (4200, 700)) # scale background image
-ground = pygame.image.load('./Game Textures/Grounds/ground.png').convert()
+ground = pygame.image.load('./Game Textures/Grounds/ground.png')
 button_img = pygame.image.load('./Game Textures/Buttons/restart.png')
 
-# load alt grounds
-ground1 = pygame.image.load('./Game Textures/Grounds/ground.png').convert()
-ground2 = pygame.image.load('./Game Textures/Grounds/ground.png').convert() # replace later with lvl 2 image
-ground3 = pygame.image.load('./Game Textures/Grounds/ground.png').convert() # replace later with lvl 3 image
-ground4 = pygame.image.load('./Game Textures/Grounds/ground4.png').convert()
-
-# scaling ground images
-ground4 = pygame.transform.scale(ground4, (900,168))
-
 #define font
-font = pygame.font.SysFont('Courier', 60)
+font = pygame.font.SysFont('Times New Roman', 60)
 
 #define color
 white = (255,255,255)
 
-# define game variables
+
+#define game variables
+ground_scroll = 0
 scroll_speed = 4
 flying = False
 game_over = False
@@ -47,11 +40,6 @@ last_token = pygame.time.get_ticks() - token_frequency
 score = 0
 pass_pipe = False
 level = 1 # for changing levels
-
-#define ground variables
-ground_scroll = 0
-ground_tiles = 2
-ground_width = ground.get_width()
 
 # define background variables
 bg_width = bg.get_width()
@@ -74,51 +62,6 @@ def reset_game():
     score = 0
     bg_scroll = 0
     return score
-
-def scroll_background():
-    global bg_scroll
-
-    if (game_over == False and flying == True):
-        # drawing the background
-        for i in range(0, bg_tiles):
-            screen.blit(bg, (i * bg_width + bg_scroll,0))
-
-        # scrolling background and resetting scroll
-        bg_scroll -= scroll_speed
-        if abs(bg_scroll) > bg_width:
-            bg_scroll = 0
-    else:
-        for i in range(0, bg_tiles):
-            screen.blit(bg, (i * bg_width + bg_scroll,0))
-
-def scroll_ground():
-    global ground_scroll
-
-    if (game_over == False and flying == True):
-        # screen.blit(ground, (ground_scroll, 618))
-        for i in range(0, ground_tiles):
-                screen.blit(ground, (i * ground_width + ground_scroll, 618))
-        
-        # scroll the ground, move tiles if needed
-        ground_scroll -= scroll_speed
-        if abs(ground_scroll) > ground_width:
-            ground_scroll = 0
-            print("ground reset")
-    else:
-        for i in range(0, ground_tiles):
-                screen.blit(ground, (i * ground_width + ground_scroll,618))
-
-def change_level():
-    global ground
-
-    if level == 1:
-        ground = ground1
-    elif level == 2:
-        ground = ground2
-    elif level == 3:
-        ground = ground3
-    elif level == 4:
-        ground = ground4
 
 # Bird class - NOW IN EXTERNAL FILE
 ''' class Bird(pygame.sprite.Sprite):
@@ -242,7 +185,7 @@ while True:
     clock.tick(fps)
 
     # scrolls if game/round is going, else maintains a static background
-    ''' if (game_over == False and flying == True):
+    if (game_over == False and flying == True):
         # drawing the background
         for i in range(0, bg_tiles):
             screen.blit(bg, (i * bg_width + bg_scroll,0))
@@ -253,33 +196,22 @@ while True:
             bg_scroll = 0
     else:
         for i in range(0, bg_tiles):
-            screen.blit(bg, (i * bg_width + bg_scroll,0)) '''
-    scroll_background()
+            screen.blit(bg, (i * bg_width + bg_scroll,0))
 
     #draw sprites to screen
     bird_group.draw(screen)
     bird_group.update(flying, game_over)
     pipe_group.draw(screen)
 
-    # draw tokens if level is 4
+    # draw tokens if level 4
     if level == 4:
         large_token_group.draw(screen)
         small_token_group.draw(screen)
 
-    ''' # draw the ground and scroll it
-    if (game_over == False and flying == True):
-        # screen.blit(ground, (ground_scroll, 618))
-        for i in range(0, ground_tiles):
-                screen.blit(ground, (i * ground_width + ground_scroll, 618))
-        
-        # scroll the ground, move tiles if needed
-        ground_scroll -= scroll_speed
-        if abs(ground_scroll) > ground_width:
-            ground_scroll = 0
-    else:
-        for i in range(0, ground_tiles):
-                screen.blit(ground, (i * ground_width + ground_scroll,618))'''
-    scroll_ground()
+
+
+    #draw the ground
+    screen.blit(ground, (ground_scroll, 618))
 
     #check score
     if len(pipe_group) > 0:
@@ -352,10 +284,10 @@ while True:
                 
                 last_token = time_now
 
-        ''' #draw scrolling ground
+        #draw scrolling ground
         ground_scroll -= scroll_speed
-        if abs(ground_scroll) > ground_width:
-            ground_scroll = 0 '''
+        if abs(ground_scroll) > 35:
+            ground_scroll = 0
             
         pipe_group.update(scroll_speed)
         large_token_group.update(scroll_speed)
@@ -379,7 +311,5 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == K_4:
                 level = 4
-                change_level()
 
     pygame.display.update()
-
