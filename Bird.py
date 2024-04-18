@@ -32,7 +32,7 @@ class Bird(pygame.sprite.Sprite):
 
         self.rect = self.images[0].get_rect()
         self.rect.center = [centerx, centery]
-        print(self.rect.width, self.rect.height)
+        # print(self.rect.width, self.rect.height)
 
     def update(self, flying, game_over, drinkMe = False):
 

@@ -16,7 +16,7 @@ pygame.display.set_caption("Flappy Bird (But Cool)")
 
 #load images
 bg = pygame.image.load('./Game Textures/Backgrounds/level1.png').convert()
-bg = pygame.transform.scale(bg, (4200, 700)) # scale background image
+bg = pygame.transform.scale(bg, (3660, 620)) # scale background image
 ground = pygame.image.load('./Game Textures/Grounds/ground.png').convert()
 button_img = pygame.image.load('./Game Textures/Buttons/restart.png')
 
@@ -241,19 +241,6 @@ while True:
 
     clock.tick(fps)
 
-    # scrolls if game/round is going, else maintains a static background
-    ''' if (game_over == False and flying == True):
-        # drawing the background
-        for i in range(0, bg_tiles):
-            screen.blit(bg, (i * bg_width + bg_scroll,0))
-
-        # scrolling background and resetting scroll
-        bg_scroll -= scroll_speed
-        if abs(bg_scroll) > bg_width:
-            bg_scroll = 0
-    else:
-        for i in range(0, bg_tiles):
-            screen.blit(bg, (i * bg_width + bg_scroll,0)) '''
     scroll_background()
 
     #draw sprites to screen
@@ -266,19 +253,7 @@ while True:
         large_token_group.draw(screen)
         small_token_group.draw(screen)
 
-    ''' # draw the ground and scroll it
-    if (game_over == False and flying == True):
-        # screen.blit(ground, (ground_scroll, 618))
-        for i in range(0, ground_tiles):
-                screen.blit(ground, (i * ground_width + ground_scroll, 618))
-        
-        # scroll the ground, move tiles if needed
-        ground_scroll -= scroll_speed
-        if abs(ground_scroll) > ground_width:
-            ground_scroll = 0
-    else:
-        for i in range(0, ground_tiles):
-                screen.blit(ground, (i * ground_width + ground_scroll,618))'''
+    # screen.blit(ground, (ground_scroll, 618))
     scroll_ground()
 
     #check score
