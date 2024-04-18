@@ -34,7 +34,7 @@ flying = False
 game_over = False
 pipe_gap = 300
 pipe_frequency = 1500 #milliseconds (1.5 sec)
-token_frequency = 800 # milliseconds, like above
+token_frequency = 600 # milliseconds, like above
 last_pipe = pygame.time.get_ticks() - pipe_frequency
 last_token = pygame.time.get_ticks() - token_frequency
 score = 0
@@ -240,7 +240,7 @@ while True:
         game_over = True
         flying = False
     
-    # look for token collisions, level 4 only
+    # look for token collisions, randomizing pipe gap, level 4 only
     if level == 4:
         # removing tokens that collide with pipes
         pygame.sprite.groupcollide(large_token_group, pipe_group, True, False)
@@ -251,6 +251,8 @@ while True:
             flappy.sizeChange(1.2)
         if pygame.sprite.groupcollide(small_token_group, bird_group, True, False):
             flappy.sizeChange(0.8)
+        
+        pipe_gap = random.randint(150,300)
 
 
     #generate pipes and ground
