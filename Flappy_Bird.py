@@ -1,5 +1,5 @@
 import pygame, sys, random, math
-import Bird, Pipe, RestartButton, SizeToken
+import Bird, Pipe, RestartButton, SizeToken, Coin
 from pygame.locals import *
 
 pygame.init()
@@ -18,7 +18,9 @@ pygame.display.set_caption("Flappy Bird (But Cool)")
 bg = pygame.image.load('./Game Textures/Backgrounds/level1.png').convert()
 bg = pygame.transform.scale(bg, (3660, 620)) # scale background image
 ground = pygame.image.load('./Game Textures/Grounds/ground.png').convert()
-button_img = pygame.image.load('./Game Textures/Buttons/restart.png')
+button_img = pygame.image.load('./Game Textures/Buttons/restart.png').convert_alpha()
+coin_img = pygame.image.load('./Game Textures/Coin/coin.png').convert_alpha()
+coin_img = pygame.transform.scale_by(coin_img, 4)
 
 # load alt grounds
 ground1 = pygame.image.load('./Game Textures/Grounds/ground.png').convert()
@@ -42,11 +44,14 @@ game_over = False
 pipe_gap = 300
 pipe_frequency = 1500 #milliseconds (1.5 sec)
 token_frequency = 600 # milliseconds, like above
+coin_frequency = 800 # milliseconds too
 last_pipe = pygame.time.get_ticks() - pipe_frequency
 last_token = pygame.time.get_ticks() - token_frequency
+last_coin = pygame.time.get_ticks() - token_frequency
 score = 0
 pass_pipe = False
 level = 1 # for changing levels
+coin_count = 0 # global coin-tracking variable
 
 #define ground variables
 ground_scroll = 0
@@ -58,17 +63,25 @@ bg_width = bg.get_width()
 bg_tiles = 2
 bg_scroll = 0
 
-
 #drawing text
 def draw_text(text, font, text_color, x, y):
     img = font.render(text, True, text_color)
     screen.blit(img, (x,y))
-    
+
+# draw coin count to screen
+def draw_coins():
+    global coin_count
+    global screen
+
+    screen.blit(coin_img, (screen_width - 40, 20))
+    draw_text(str(coin_count), font, white, screen_width - 100, 12)
+
 #reset score
 def reset_game(): 
     pipe_group.empty()
     large_token_group.empty()
     small_token_group.empty()
+    coin_group.empty()
     flappy.rect.x = 100
     flappy.rect.y = int(screen_height / 2)
     score = 0
@@ -224,6 +237,7 @@ bird_group = pygame.sprite.Group()
 pipe_group = pygame.sprite.Group()
 large_token_group = pygame.sprite.Group() # size change level
 small_token_group = pygame.sprite.Group() # size change level
+coin_group = pygame.sprite.Group() # coin group
 
 #sprites
 flappy = Bird.Bird(100,int(screen_height / 2))
@@ -247,6 +261,7 @@ while True:
     bird_group.draw(screen)
     bird_group.update(flying, game_over)
     pipe_group.draw(screen)
+    coin_group.draw(screen)
 
     # draw tokens if level is 4
     if level == 4:
@@ -271,7 +286,9 @@ while True:
 
     #draw score to screen
     draw_text(str(score), font, white, int(screen_width / 2), 20)
-     
+    
+    # draw coin count to screen
+    draw_coins()
 
     #look for pipe collision
     if pygame.sprite.groupcollide(bird_group, pipe_group, False, False) or flappy.rect.top < 0:
@@ -282,6 +299,10 @@ while True:
     if flappy.rect.bottom >= 618:
         game_over = True
         flying = False
+
+    # look for coin collisions, update coins
+    if pygame.sprite.groupcollide(coin_group, bird_group, True, False):
+        coin_count += 1
     
     # look for token collisions, randomizing pipe gap, level 4 only
     if level == 4:
@@ -298,9 +319,10 @@ while True:
         pipe_gap = random.randint(150,300)
 
 
-    #generate pipes and ground
+    #generate pipes, coins, and lvl 4 tokens
     if game_over == False and flying == True:
-        #generate new pipes
+
+        # generate new pipes
         time_now = pygame.time.get_ticks()
         if time_now - last_pipe > pipe_frequency:
             pipe_height = random.randint(-100,100) #randomize distsnce between pipes
@@ -311,11 +333,20 @@ while True:
             last_pipe = time_now
         
 
+        # generate new coins
+        if time_now - last_coin > coin_frequency:
+            coiny = random.randint(100, 500)
+            coinx = screen_width
+
+            new_coin = Coin.Coin(coinx, coiny)
+            coin_group.add(new_coin)
+            last_coin = time_now
+
         # generating size change tokens if level is 4
         if level == 4:
             if time_now - last_token > token_frequency:
                 tokeny = random.randint(100, 500)
-                tokenx = 664
+                tokenx = screen_width
                 token_type = random.randint(0,1)
 
                 token = SizeToken.Token(tokenx, tokeny, token_type)
@@ -326,15 +357,12 @@ while True:
                     small_token_group.add(token)
                 
                 last_token = time_now
-
-        ''' #draw scrolling ground
-        ground_scroll -= scroll_speed
-        if abs(ground_scroll) > ground_width:
-            ground_scroll = 0 '''
+            
+            large_token_group.update(scroll_speed)
+            small_token_group.update(scroll_speed)
             
         pipe_group.update(scroll_speed)
-        large_token_group.update(scroll_speed)
-        small_token_group.update(scroll_speed)
+        coin_group.update(scroll_speed)
 
     #check for game over and reset
     if game_over == True:

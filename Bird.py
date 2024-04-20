@@ -8,7 +8,7 @@ class Bird(pygame.sprite.Sprite):
         self.index = 0
         self.counter = 0
         for num in range(1,4):
-            img = pygame.image.load(f'./Game Textures/Sprites/Birds L1/coolbird{num}.png')
+            img = pygame.image.load(f'./Game Textures/Sprites/Birds L1/coolbird{num}.png').convert_alpha()
             self.images.append(img)
         self.image = self.images[self.index]
         self.rect = self.image.get_rect()
@@ -21,7 +21,7 @@ class Bird(pygame.sprite.Sprite):
     def sizeChange(self, scale, reset = False):
         if reset == True:
             for i in range(len(self.images)):
-                self.images[i] = pygame.image.load(f'./Game Textures/Sprites/Birds L1/coolbird{i + 1}.png')
+                self.images[i] = pygame.image.load(f'./Game Textures/Sprites/Birds L1/coolbird{i + 1}.png').convert_alpha()
                 self.images[i] = pygame.transform.scale(self.images[i], (51,37))
         else:
             for i in range(len(self.images)):

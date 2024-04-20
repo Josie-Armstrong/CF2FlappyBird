@@ -7,10 +7,10 @@ class Token(pygame.sprite.Sprite):
         self.type = ""
 
         if type == 1:
-            self.image = pygame.image.load('./Game Textures/Tokens/largeToken.png')
+            self.image = pygame.image.load('./Game Textures/Tokens/largeToken.png').convert_alpha()
             self.type = "large"
         else:
-            self.image = pygame.image.load('./Game Textures/Tokens/smallToken.png')
+            self.image = pygame.image.load('./Game Textures/Tokens/smallToken.png').convert_alpha()
             self.type = "small"
 
         self.image = pygame.transform.scale_by(self.image, 1.5)
