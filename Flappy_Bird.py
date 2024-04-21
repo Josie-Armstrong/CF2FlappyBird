@@ -17,15 +17,17 @@ pygame.display.set_caption("Flappy Bird (But Cool)")
 #load images
 bg = pygame.image.load('./Game Textures/Backgrounds/level1.png').convert()
 bg = pygame.transform.scale(bg, (3660, 620)) # scale background image
-ground = pygame.image.load('./Game Textures/Grounds/ground.png').convert()
+ground = pygame.image.load('./Game Textures/Grounds/ground1.png').convert()
 button_img = pygame.image.load('./Game Textures/Buttons/restart.png').convert_alpha()
 coin_img = pygame.image.load('./Game Textures/Coin/coin.png').convert_alpha()
-coin_img = pygame.transform.scale_by(coin_img, 4)
+coin_img = pygame.transform.scale_by(coin_img, 3)
+coin_bg = pygame.image.load('./Game Textures/Coin/coin_bg.png').convert_alpha()
+coin_bg = pygame.transform.scale_by(coin_bg, 6)
 
 # load alt grounds
-ground1 = pygame.image.load('./Game Textures/Grounds/ground.png').convert()
-ground2 = pygame.image.load('./Game Textures/Grounds/ground.png').convert() # replace later with lvl 2 image
-ground3 = pygame.image.load('./Game Textures/Grounds/ground.png').convert() # replace later with lvl 3 image
+ground1 = pygame.image.load('./Game Textures/Grounds/ground1.png').convert()
+ground2 = pygame.image.load('./Game Textures/Grounds/ground2.png').convert()
+ground3 = pygame.image.load('./Game Textures/Grounds/ground3.png').convert()
 ground4 = pygame.image.load('./Game Textures/Grounds/ground4.png').convert()
 
 # scaling ground images
@@ -33,9 +35,11 @@ ground4 = pygame.transform.scale(ground4, (900,168))
 
 #define font
 font = pygame.font.SysFont('Courier', 60)
+coin_font = pygame.font.SysFont('Courier',40)
 
 #define color
 white = (255,255,255)
+black = (0,0,0)
 
 # define game variables
 scroll_speed = 4
@@ -51,6 +55,8 @@ last_coin = pygame.time.get_ticks() - token_frequency
 score = 0
 pass_pipe = False
 level = 1 # for changing levels
+lvl_change = False
+last_lvl_change = 0
 coin_count = 0 # global coin-tracking variable
 
 #define ground variables
@@ -73,11 +79,26 @@ def draw_coins():
     global coin_count
     global screen
 
-    screen.blit(coin_img, (screen_width - 40, 20))
-    draw_text(str(coin_count), font, white, screen_width - 100, 12)
+    coin_count_x = 0
+
+    if coin_count < 10:
+        coin_count_x = screen_width - 60
+    elif coin_count < 100:
+        coin_count_x = screen_width - 85
+    else:
+        coin_count_x = screen_width - 105
+
+    screen.blit(coin_bg, (screen_width - 120, 0))
+    screen.blit(coin_img, (screen_width - 30, 7))
+    draw_text(str(coin_count), coin_font, black, coin_count_x, 3)
 
 #reset score
-def reset_game(): 
+def reset_game():
+    global score
+    global bg_scroll
+    global level
+    global last_lvl_change
+
     pipe_group.empty()
     large_token_group.empty()
     small_token_group.empty()
@@ -86,6 +107,10 @@ def reset_game():
     flappy.rect.y = int(screen_height / 2)
     score = 0
     bg_scroll = 0
+    level = 1
+    last_lvl_change = 0
+    change_level()
+
     return score
 
 def scroll_background():
@@ -123,6 +148,11 @@ def scroll_ground():
 
 def change_level():
     global ground
+    global level
+
+    large_token_group.empty()
+    small_token_group.empty()
+    flappy.sizeChange(1, True)
 
     if level == 1:
         ground = ground1
@@ -132,6 +162,7 @@ def change_level():
         ground = ground3
     elif level == 4:
         ground = ground4
+    # print("level changed")
 
 # Bird class - NOW IN EXTERNAL FILE
 ''' class Bird(pygame.sprite.Sprite):
@@ -256,6 +287,7 @@ while True:
     clock.tick(fps)
 
     scroll_background()
+    # screen.blit(bg, (0,0))
 
     #draw sprites to screen
     bird_group.draw(screen)
@@ -269,7 +301,8 @@ while True:
         small_token_group.draw(screen)
 
     # screen.blit(ground, (ground_scroll, 618))
-    scroll_ground()
+    screen.blit(ground, (0,618))
+    # scroll_ground()
 
     #check score
     if len(pipe_group) > 0:
@@ -371,6 +404,20 @@ while True:
             score = reset_game()
             bg_scroll = 0
             flappy.sizeChange(0, True)
+    
+    # check for level change
+    if (score % 10 == 0) and last_lvl_change < score:
+        if (level < 4) and (score <= 30):
+            level += 1
+        else:
+            level = random.randint(1,4)
+        lvl_change = True
+        last_lvl_change = score
+        # print("level changed")
+    
+    if lvl_change == True:
+        change_level()
+        lvl_change = False
 
     # check for quit event
     for event in pygame.event.get():
