@@ -73,10 +73,10 @@ pass_pipe = False
 level = 1 # for changing levels
 lvl_change = False
 last_lvl_change = 0
-coin_count = 60 # global coin-tracking variable
-total_heart_count = 3
-heart_count = 3
-shield_count = 3
+coin_count = 0 # global coin-tracking variable
+total_heart_count = 10
+heart_count = 10
+shield_count = 10
 shop_open = False
 
 #define ground variables
@@ -172,6 +172,7 @@ def change_level():
     large_token_group.empty()
     small_token_group.empty()
     flappy.sizeChange(1, True)
+    pipe_gap = 300
 
     if level == 1:
         ground = ground1
@@ -362,9 +363,6 @@ while True:
     screen.blit(ground, (0,618))
     # scroll_ground()
 
-    # draw hearts and shields
-    draw_hearts_and_shields()
-
     # draw shop button if a round is not in progress
     if flying == False and game_over == False and shop_open == False:
         shop_button.draw()
@@ -375,6 +373,9 @@ while True:
     if shop_open == True:
         time_now = pygame.time.get_ticks()
         run_shop(time_now)
+    
+    # draw hearts and shields
+    draw_hearts_and_shields()
 
     #check score
     if len(pipe_group) > 0:
@@ -389,8 +390,9 @@ while True:
 
     # print(score) DEBUG
 
-    #draw score to screen
-    draw_text(str(score), font, white, int(screen_width / 2), 20)
+    if shop_open == False:
+        #draw score to screen
+        draw_text(str(score), font, white, int(screen_width / 2), 20)
     
     # draw coin count to screen
     draw_coins()

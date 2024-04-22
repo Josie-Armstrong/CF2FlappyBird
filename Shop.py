@@ -21,7 +21,7 @@ class Shop(pygame.sprite.Sprite):
         # making the back button object
         back_img = pygame.image.load('./Game Textures/Shop/back_btn.png').convert()
         back_img = pygame.transform.scale_by(back_img, 6)
-        self.back_btn = ShopButton.ShopButton((self.screen_width // 2) - (13 * 6), self.screen_height - 100, back_img, self.screen)
+        self.back_btn = ShopButton.ShopButton((self.screen_width - 180), self.screen_height - 100, back_img, self.screen)
     
     def draw(self):
 
