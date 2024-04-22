@@ -8,7 +8,7 @@ class Coin(pygame.sprite.Sprite):
 
         self.image = pygame.transform.scale_by(self.image, 3)
         self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
+        self.rect.center = (x, y)
     
     def update(self, scroll_speed):
         self.rect.x -= scroll_speed

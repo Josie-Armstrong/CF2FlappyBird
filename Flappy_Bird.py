@@ -1,5 +1,5 @@
 import pygame, sys, random, math
-import Bird, Pipe, RestartButton, SizeToken, Coin
+import Bird, Pipe, RestartButton, SizeToken, Coin, Shop, ShopButton, HeartShield
 from pygame.locals import *
 
 pygame.init()
@@ -17,12 +17,20 @@ pygame.display.set_caption("Flappy Bird (But Cool)")
 #load images
 bg = pygame.image.load('./Game Textures/Backgrounds/level1.png').convert()
 bg = pygame.transform.scale(bg, (3660, 620)) # scale background image
+
 ground = pygame.image.load('./Game Textures/Grounds/ground1.png').convert()
-button_img = pygame.image.load('./Game Textures/Buttons/restart.png').convert_alpha()
+
+button_img = pygame.image.load('./Game Textures/Buttons/restart_btn_new.png').convert_alpha()
+button_img = pygame.transform.scale(button_img, (120,42))
+
 coin_img = pygame.image.load('./Game Textures/Coin/coin.png').convert_alpha()
 coin_img = pygame.transform.scale_by(coin_img, 3)
 coin_bg = pygame.image.load('./Game Textures/Coin/coin_bg.png').convert_alpha()
 coin_bg = pygame.transform.scale_by(coin_bg, 6)
+
+shop_btn_img = pygame.image.load('./Game Textures/Shop/shop_btn.png').convert_alpha()
+shop_btn_img = pygame.transform.scale_by(shop_btn_img, 4)
+
 
 # load alt grounds
 ground1 = pygame.image.load('./Game Textures/Grounds/ground1.png').convert()
@@ -32,6 +40,7 @@ ground4 = pygame.image.load('./Game Textures/Grounds/ground4.png').convert()
 
 # scaling ground images
 ground4 = pygame.transform.scale(ground4, (900,168))
+
 
 #define font
 font = pygame.font.SysFont('Courier', 60)
@@ -49,15 +58,21 @@ pipe_gap = 300
 pipe_frequency = 1500 #milliseconds (1.5 sec)
 token_frequency = 600 # milliseconds, like above
 coin_frequency = 800 # milliseconds too
+heart_shield_frequency = 750
 last_pipe = pygame.time.get_ticks() - pipe_frequency
 last_token = pygame.time.get_ticks() - token_frequency
 last_coin = pygame.time.get_ticks() - token_frequency
+last_heart_shield_use = pygame.time.get_ticks() - heart_shield_frequency
 score = 0
 pass_pipe = False
 level = 1 # for changing levels
 lvl_change = False
 last_lvl_change = 0
 coin_count = 0 # global coin-tracking variable
+total_heart_count = 3
+heart_count = 3
+shield_count = 3
+shop_open = False
 
 #define ground variables
 ground_scroll = 0
@@ -94,10 +109,7 @@ def draw_coins():
 
 #reset score
 def reset_game():
-    global score
-    global bg_scroll
-    global level
-    global last_lvl_change
+    global score, bg_scroll, level, last_lvl_change, heart_count, total_heart_count
 
     pipe_group.empty()
     large_token_group.empty()
@@ -109,6 +121,8 @@ def reset_game():
     bg_scroll = 0
     level = 1
     last_lvl_change = 0
+    heart_count = total_heart_count
+    # print("Heart Count:" + str(heart_count))
     change_level()
 
     return score
@@ -163,6 +177,31 @@ def change_level():
     elif level == 4:
         ground = ground4
     # print("level changed")
+
+def run_shop():
+    global shop, shop_open, coin_count, shield_count, heart_count, total_heart_count
+
+    shop_action = shop.draw()
+    if shop_action == 0:
+        shop_open = False
+    elif shop_action == 1:
+        if (coin_count >= 20) and (shield_count < 10):
+            coin_count -= 20
+            shield_count += 1
+    elif shop_action == 2:
+        if (coin_count >= 100) and (heart_count < 10):
+            coin_count -= 100
+            total_heart_count += 1
+            heart_count = total_heart_count
+
+def draw_hearts_and_shields():
+    global heart_count, shield_count, screen
+
+    for i in range(0,10):
+        if i < heart_count:
+            heart_array[i].draw()
+        if i < shield_count:
+            shield_array[i].draw()
 
 # Bird class - NOW IN EXTERNAL FILE
 ''' class Bird(pygame.sprite.Sprite):
@@ -240,7 +279,6 @@ def change_level():
         if self.rect.right < 0: #gets rid of pipes that are offscreen to save memory
             self.kill()'''
 
-
 ''' class Button():
     def __init__(self, x, y, image):
         self.image = image
@@ -273,13 +311,26 @@ coin_group = pygame.sprite.Group() # coin group
 #sprites
 flappy = Bird.Bird(100,int(screen_height / 2))
 
-
 #add sprite groups 
 bird_group.add(flappy)
 
-
 #create restart button instance
 button = RestartButton.Button(screen_width // 2 - 50, screen_height // 2 - 100, button_img, screen)
+
+# create shop and button to access
+shop_button = ShopButton.ShopButton(10, 10, shop_btn_img, screen)
+shop = Shop.Shop(screen, screen_width, screen_height)
+
+# heart and shield arrays
+heart_array = []
+shield_array = []
+
+for i in range(0,10):
+    new_heart = HeartShield.HeartShield('h',i,screen_height, screen)
+    new_shield = HeartShield.HeartShield('s',i,screen_height, screen)
+
+    heart_array.append(new_heart)
+    shield_array.append(new_shield)
 
 #run the game
 while True:
@@ -304,6 +355,19 @@ while True:
     screen.blit(ground, (0,618))
     # scroll_ground()
 
+    # draw hearts and shields
+    draw_hearts_and_shields()
+
+    # draw shop button if a round is not in progress
+    if flying == False and game_over == False and shop_open == False:
+        shop_button.draw()
+        if shop_button.check_pressed() == True:
+            shop_open = True
+            print("shop open!")
+    
+    if shop_open == True:
+        run_shop()
+
     #check score
     if len(pipe_group) > 0:
         if bird_group.sprites()[0].rect.left > pipe_group.sprites()[0].rect.left\
@@ -325,8 +389,16 @@ while True:
 
     #look for pipe collision
     if pygame.sprite.groupcollide(bird_group, pipe_group, False, False) or flappy.rect.top < 0:
-        game_over = True
-
+        # if pipe collision is true, use a shield or heart if possible. If not possible, end game.
+        time_now = pygame.time.get_ticks()
+        if time_now - last_heart_shield_use > heart_shield_frequency:
+            if(shield_count > 0):
+                shield_count -= 1
+            elif(heart_count > 0):
+                heart_count -= 1
+            else:
+                game_over = True
+            last_heart_shield_use = time_now
 
     #look for ground collision
     if flappy.rect.bottom >= 618:
@@ -415,6 +487,7 @@ while True:
         last_lvl_change = score
         # print("level changed")
     
+    # using the change_level function if the level has changed
     if lvl_change == True:
         change_level()
         lvl_change = False
@@ -424,9 +497,11 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        if event.type == pygame.MOUSEBUTTONDOWN and flying == False and game_over == False:
-            flying = True
+        # if event.type == pygame.MOUSEBUTTONDOWN and flying == False and game_over == False:
+            # flying = True
         if event.type == pygame.KEYDOWN:
+            if event.key == K_SPACE and flying == False:
+                flying = True
             if event.key == K_4:
                 level = 4
                 change_level()
