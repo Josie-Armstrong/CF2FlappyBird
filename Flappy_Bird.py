@@ -55,20 +55,25 @@ scroll_speed = 4
 flying = False
 game_over = False
 pipe_gap = 300
+# frequencies
 pipe_frequency = 1500 #milliseconds (1.5 sec)
 token_frequency = 600 # milliseconds, like above
 coin_frequency = 800 # milliseconds too
 heart_shield_frequency = 750
+buy_frequency = 300
+# last instances
 last_pipe = pygame.time.get_ticks() - pipe_frequency
 last_token = pygame.time.get_ticks() - token_frequency
 last_coin = pygame.time.get_ticks() - token_frequency
 last_heart_shield_use = pygame.time.get_ticks() - heart_shield_frequency
+last_buy = pygame.time.get_ticks() - buy_frequency
+# other variables
 score = 0
 pass_pipe = False
 level = 1 # for changing levels
 lvl_change = False
 last_lvl_change = 0
-coin_count = 0 # global coin-tracking variable
+coin_count = 60 # global coin-tracking variable
 total_heart_count = 3
 heart_count = 3
 shield_count = 3
@@ -178,21 +183,23 @@ def change_level():
         ground = ground4
     # print("level changed")
 
-def run_shop():
-    global shop, shop_open, coin_count, shield_count, heart_count, total_heart_count
+def run_shop(time_now):
+    global shop, shop_open, coin_count, shield_count, heart_count, total_heart_count, last_buy, buy_frequency
 
     shop_action = shop.draw()
     if shop_action == 0:
         shop_open = False
     elif shop_action == 1:
-        if (coin_count >= 20) and (shield_count < 10):
+        if (coin_count >= 20) and (shield_count < 10) and (time_now - last_buy > buy_frequency):
             coin_count -= 20
             shield_count += 1
+            last_buy = time_now
     elif shop_action == 2:
-        if (coin_count >= 100) and (heart_count < 10):
+        if (coin_count >= 100) and (heart_count < 10) and (time_now - last_buy > buy_frequency):
             coin_count -= 100
             total_heart_count += 1
             heart_count = total_heart_count
+            last_buy = time_now
 
 def draw_hearts_and_shields():
     global heart_count, shield_count, screen
@@ -366,7 +373,8 @@ while True:
             print("shop open!")
     
     if shop_open == True:
-        run_shop()
+        time_now = pygame.time.get_ticks()
+        run_shop(time_now)
 
     #check score
     if len(pipe_group) > 0:
