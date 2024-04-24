@@ -38,7 +38,11 @@ ground2 = pygame.image.load('./Game Textures/Grounds/ground2.png').convert()
 ground3 = pygame.image.load('./Game Textures/Grounds/ground3.png').convert()
 ground4 = pygame.image.load('./Game Textures/Grounds/ground4.png').convert()
 
-# load obstacles
+# load alt backgrounds
+bg1 = pygame.image.load('./Game Textures/Backgrounds/level1.png').convert()
+bg1 = pygame.transform.scale(bg1, (3660, 620)) # scale background image
+bg2 = pygame.image.load('./Game Textures/Backgrounds/level2.png').convert()
+bg2 = pygame.transform.scale(bg2, (3660, 620)) # scale background image
 
 
 
@@ -167,8 +171,7 @@ def scroll_ground():
                 screen.blit(ground, (i * ground_width + ground_scroll,618))
 
 def change_level():
-    global ground
-    global level
+    global ground, level, bg
 
     large_token_group.empty()
     small_token_group.empty()
@@ -177,8 +180,10 @@ def change_level():
 
     if level == 1:
         ground = ground1
+        bg = bg1
     elif level == 2:
         ground = ground2
+        bg = bg2
     elif level == 3:
         ground = ground3
     elif level == 4:
