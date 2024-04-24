@@ -450,7 +450,7 @@ while True:
         time_now = pygame.time.get_ticks()
         if time_now - last_pipe > pipe_frequency:
             if level == 2:
-                pipe_height = random.randint(-50,200)
+                pipe_height = random.randint(100,170)
             else:
                 pipe_height = random.randint(-100,100) #randomize distsnce between pipes
 
