@@ -2,9 +2,19 @@ import pygame, sys, random, math
 from pygame.locals import *
 
 class Pipe(pygame.sprite.Sprite):
-    def __init__(self, x, y, position, pipe_gap):
+    def __init__(self, x, y, position, pipe_gap, level = 1):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('./Game Textures/Obstacles/level1.png')
+
+        # Pipe image is determined by the level
+        if level == 1:
+            self.image = pygame.image.load('./Game Textures/Obstacles/level1.png').convert_alpha()
+        elif level == 2:
+            self.image = pygame.image.load('./Game Textures/Obstacles/bubbles.png').convert_alpha()
+        elif level == 3:
+            self.image = pygame.image.load('./Game Textures/Obstacles/level1.png').convert_alpha()
+        else:
+            self.image = pygame.image.load('./Game Textures/Obstacles/level1.png').convert_alpha()
+
         self.image = pygame.transform.scale(self.image, (78, 560))
         self.rect = self.image.get_rect()
         #position 1 is from top, -1 is from bottom

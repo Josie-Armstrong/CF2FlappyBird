@@ -34,12 +34,18 @@ class Bird(pygame.sprite.Sprite):
         self.rect.center = [centerx, centery]
         # print(self.rect.width, self.rect.height)
 
-    def update(self, flying, game_over, drinkMe = False):
+    def update(self, flying, game_over, level = 1):
 
 
         #gravity
         if flying == True:
-            self.vel += 0.5
+            
+            if level != 2:
+                self.vel += 0.5
+            else:
+                self.vel -= 0.3
+
+            # self.vel += 0.5
             if self.vel > 8:
                 self.vel = 8
             if self.rect.bottom < 618: #if bird is above the ground (inc y means moving down)
@@ -52,7 +58,10 @@ class Bird(pygame.sprite.Sprite):
             key = pygame.key.get_pressed()
             if key[pygame.K_SPACE] and self.jumped == False and self.mid_air == True:
                 self.jumped = True
-                self.vel = -10
+                if level == 2:
+                    self.vel = 10
+                else:
+                    self.vel = -10
 
             if key[pygame.K_SPACE] == False:
                 self.jumped = False

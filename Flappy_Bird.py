@@ -38,8 +38,8 @@ ground2 = pygame.image.load('./Game Textures/Grounds/ground2.png').convert()
 ground3 = pygame.image.load('./Game Textures/Grounds/ground3.png').convert()
 ground4 = pygame.image.load('./Game Textures/Grounds/ground4.png').convert()
 
-# scaling ground images
-ground4 = pygame.transform.scale(ground4, (900,168))
+# load obstacles
+
 
 
 #define font
@@ -122,6 +122,7 @@ def reset_game():
     coin_group.empty()
     flappy.rect.x = 100
     flappy.rect.y = int(screen_height / 2)
+    flappy.vel = 0
     score = 0
     bg_scroll = 0
     level = 1
@@ -350,7 +351,7 @@ while True:
 
     #draw sprites to screen
     bird_group.draw(screen)
-    bird_group.update(flying, game_over)
+    bird_group.update(flying, game_over, level)
     pipe_group.draw(screen)
     coin_group.draw(screen)
 
@@ -414,6 +415,9 @@ while True:
     if flappy.rect.bottom >= 618:
         game_over = True
         flying = False
+    if flappy.rect.top <= 0:
+        game_over = True
+        flying = False
 
     # look for coin collisions, update coins
     if pygame.sprite.groupcollide(coin_group, bird_group, True, False):
@@ -440,10 +444,16 @@ while True:
         # generate new pipes
         time_now = pygame.time.get_ticks()
         if time_now - last_pipe > pipe_frequency:
-            pipe_height = random.randint(-100,100) #randomize distsnce between pipes
-            btm_pipe = Pipe.Pipe(screen_width, int(screen_height / 2) + pipe_height, -1, pipe_gap)
-            top_pipe = Pipe.Pipe(screen_width, int(screen_height / 2) + pipe_height, 1, pipe_gap)
-            pipe_group.add(btm_pipe)
+            if level == 2:
+                pipe_height = random.randint(-50,200)
+            else:
+                pipe_height = random.randint(-100,100) #randomize distsnce between pipes
+
+            if level != 2:
+                btm_pipe = Pipe.Pipe(screen_width, int(screen_height / 2) + pipe_height, -1, pipe_gap, level)
+                pipe_group.add(btm_pipe)
+
+            top_pipe = Pipe.Pipe(screen_width, int(screen_height / 2) + pipe_height, 1, pipe_gap, level)
             pipe_group.add(top_pipe)
             last_pipe = time_now
         
