@@ -73,6 +73,7 @@ last_heart_shield_use = pygame.time.get_ticks() - heart_shield_frequency
 last_buy = pygame.time.get_ticks() - buy_frequency
 # other variables
 score = 0
+highscore = 0
 pass_pipe = False
 level = 1 # for changing levels
 lvl_change = False
@@ -118,8 +119,10 @@ def draw_coins():
 
 #reset score
 def reset_game():
-    global score, bg_scroll, level, last_lvl_change, heart_count, total_heart_count
+    global score, bg_scroll, level, last_lvl_change, heart_count, total_heart_count, highscore
 
+    if score > highscore:
+        highscore = score
     pipe_group.empty()
     large_token_group.empty()
     small_token_group.empty()
