@@ -54,7 +54,7 @@ bg4 = pygame.transform.scale(bg4, (3660, 620)) # scale background image
 #define font
 font = pygame.font.SysFont('Courier', 60)
 coin_font = pygame.font.SysFont('Courier',40)
-font2 = pygame.font.SysFont('Courier', 30)
+font2 = pygame.font.SysFont('Courier', 20)
 
 #define color
 white = (255,255,255)
@@ -410,7 +410,7 @@ while True:
     if shop_open == False:
         #draw score to screen
         draw_text(str(score), font, white, int(screen_width / 2), 20)
-        draw_text(f"Highscore:{highscore}", font2, white,230, 75)
+        draw_text(f"Highscore:{highscore}", font2, white,10, 75)
     
     # draw coin count to screen
     draw_coins()
