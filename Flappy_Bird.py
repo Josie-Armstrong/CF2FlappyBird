@@ -1,7 +1,7 @@
 import pygame, sys, random, math
 import Bird, Pipe, RestartButton, SizeToken, Coin, Shop, ShopButton, HeartShield
 from pygame.locals import *
-
+from Enemy import Enemy
 pygame.init()
 clock = pygame.time.Clock()
 fps = 60
@@ -44,7 +44,7 @@ bg1 = pygame.image.load('./Game Textures/Backgrounds/level1.png').convert()
 bg1 = pygame.transform.scale(bg1, (3660, 620)) # scale background image
 bg2 = pygame.image.load('./Game Textures/Backgrounds/level2.png').convert()
 bg2 = pygame.transform.scale(bg2, (3660, 620)) # scale background image
-bg3 = pygame.image.load('./Game Textures/Backgrounds/level3.png').convert() # replace with bg3 when ready
+bg3 = pygame.image.load('./Game Textures/Backgrounds/level3.png').convert()
 bg3 = pygame.transform.scale(bg3, (3660, 620)) # scale background image
 bg4 = pygame.image.load('./Game Textures/Backgrounds/level4.png').convert()
 bg4 = pygame.transform.scale(bg4, (3660, 620)) # scale background image
@@ -99,6 +99,10 @@ ground_width = ground.get_width()
 bg_width = bg.get_width()
 bg_tiles = 2
 bg_scroll = 0
+#enemy level variables
+enemy_speed = 15  # Adjust as needed 
+last_enemy_spawn = pygame.time.get_ticks()  # Initialize to current time
+enemy_spawn_frequency = 1000
 
 #drawing text
 def draw_text(text, font, text_color, x, y):
@@ -332,6 +336,7 @@ pipe_group = pygame.sprite.Group()
 large_token_group = pygame.sprite.Group() # size change level
 small_token_group = pygame.sprite.Group() # size change level
 coin_group = pygame.sprite.Group() # coin group
+enemy_group = pygame.sprite.Group() # projectile level
 
 #sprites
 flappy = Bird.Bird(100,int(screen_height / 2))
@@ -370,6 +375,32 @@ while True:
     bird_group.update(flying, game_over, level)
     pipe_group.draw(screen)
     coin_group.draw(screen)
+
+    if level == 3:
+        if game_over == False and flying == True:
+            time_now = pygame.time.get_ticks()
+        if time_now - last_enemy_spawn > enemy_spawn_frequency:
+            # Spawn projectile at a random position on the right side of the screen
+            enemy_y = random.randint(50, screen_height - 50)  
+            new_enemy = Enemy(screen_width, enemy_y, enemy_speed)
+            enemy_group.add(new_enemy)
+            last_enemy_spawn = time_now
+            # Update and draw projectiles
+    enemy_group.update()
+    enemy_group.draw(screen)
+    #collision with the projectile
+    if level == 3:
+     if pygame.sprite.groupcollide(bird_group, enemy_group, False, False) or flappy.rect.top < 0:
+        time_now = pygame.time.get_ticks()
+        if time_now - last_heart_shield_use > heart_shield_frequency:
+            if game_over == False:
+                if(shield_count > 0):
+                    shield_count -= 1
+                elif(heart_count > 0):
+                    heart_count -= 1
+                else:
+                    game_over = True
+            last_heart_shield_use = time_now
 
     # draw tokens if level is 4
     if level == 4:
