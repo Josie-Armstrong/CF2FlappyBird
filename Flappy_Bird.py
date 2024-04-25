@@ -37,12 +37,17 @@ ground1 = pygame.image.load('./Game Textures/Grounds/ground1.png').convert()
 ground2 = pygame.image.load('./Game Textures/Grounds/ground2.png').convert()
 ground3 = pygame.image.load('./Game Textures/Grounds/ground3.png').convert()
 ground4 = pygame.image.load('./Game Textures/Grounds/ground4.png').convert()
+ground4 = pygame.transform.scale(ground4, (900, 168))
 
 # load alt backgrounds
 bg1 = pygame.image.load('./Game Textures/Backgrounds/level1.png').convert()
 bg1 = pygame.transform.scale(bg1, (3660, 620)) # scale background image
 bg2 = pygame.image.load('./Game Textures/Backgrounds/level2.png').convert()
 bg2 = pygame.transform.scale(bg2, (3660, 620)) # scale background image
+bg3 = pygame.image.load('./Game Textures/Backgrounds/level1.png').convert() # replace with bg3 when ready
+bg3 = pygame.transform.scale(bg3, (3660, 620)) # scale background image
+bg4 = pygame.image.load('./Game Textures/Backgrounds/level4.png').convert()
+bg4 = pygame.transform.scale(bg4, (3660, 620)) # scale background image
 
 
 
@@ -75,7 +80,7 @@ last_buy = pygame.time.get_ticks() - buy_frequency
 score = 0
 highscore = 0
 pass_pipe = False
-level = 1 # for changing levels
+level = 3 # for changing levels
 lvl_change = False
 last_lvl_change = 0
 coin_count = 0 # global coin-tracking variable
@@ -189,8 +194,10 @@ def change_level():
         bg = bg2
     elif level == 3:
         ground = ground3
+        bg = bg3
     elif level == 4:
         ground = ground4
+        bg = bg4
     # print("level changed")
 
 def run_shop(time_now):
@@ -411,12 +418,13 @@ while True:
         # if pipe collision is true, use a shield or heart if possible. If not possible, end game.
         time_now = pygame.time.get_ticks()
         if time_now - last_heart_shield_use > heart_shield_frequency:
-            if(shield_count > 0):
-                shield_count -= 1
-            elif(heart_count > 0):
-                heart_count -= 1
-            else:
-                game_over = True
+            if game_over == False:
+                if(shield_count > 0):
+                    shield_count -= 1
+                elif(heart_count > 0):
+                    heart_count -= 1
+                else:
+                    game_over = True
             last_heart_shield_use = time_now
 
     #look for ground collision
