@@ -49,7 +49,10 @@ bg3 = pygame.transform.scale(bg3, (3660, 620)) # scale background image
 bg4 = pygame.image.load('./Game Textures/Backgrounds/level4.png').convert()
 bg4 = pygame.transform.scale(bg4, (3660, 620)) # scale background image
 
-
+#music
+pygame.mixer.music.load('./Game Textures/otherside.wav')
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.5)
 
 #define font
 font = pygame.font.SysFont('Courier', 60)
@@ -446,7 +449,10 @@ while True:
     if shop_open == False:
         #draw score to screen
         draw_text(str(score), font, white, int(screen_width / 2), 20)
-        draw_text(f"Highscore:{highscore}", font2, white,10, 75)
+        if flying == False:
+            draw_text(f"Highscore:{highscore}", font2, white,10, 75)
+        else:
+            draw_text(f"Highscore:{highscore}", font2, white, 10, 10)
     
     # draw coin count to screen
     draw_coins()
