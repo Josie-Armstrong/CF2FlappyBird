@@ -86,9 +86,9 @@ auto_jump = False # for a level change bug fix
 lvl_change = False
 last_lvl_change = 0
 coin_count = 0 # global coin-tracking variable
-total_heart_count = 3
-heart_count = 3
-shield_count = 5
+total_heart_count = 10
+heart_count = 10
+shield_count = 10
 shop_open = False
 
 #define ground variables
@@ -185,7 +185,7 @@ def scroll_ground():
                 screen.blit(ground, (i * ground_width + ground_scroll,618))
 
 def change_level():
-    global ground, level, bg, auto_jump
+    global ground, level, bg, auto_jump, pipe_gap
 
     large_token_group.empty()
     small_token_group.empty()
