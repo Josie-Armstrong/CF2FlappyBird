@@ -82,12 +82,13 @@ score = 0
 highscore = 0
 pass_pipe = False
 level = 1 # for changing levels
+auto_jump = False # for a level change bug fix
 lvl_change = False
 last_lvl_change = 0
 coin_count = 0 # global coin-tracking variable
-total_heart_count = 10
-heart_count = 10
-shield_count = 10
+total_heart_count = 3
+heart_count = 3
+shield_count = 5
 shop_open = False
 
 #define ground variables
@@ -184,7 +185,7 @@ def scroll_ground():
                 screen.blit(ground, (i * ground_width + ground_scroll,618))
 
 def change_level():
-    global ground, level, bg
+    global ground, level, bg, auto_jump
 
     large_token_group.empty()
     small_token_group.empty()
@@ -204,6 +205,10 @@ def change_level():
         ground = ground4
         bg = bg4
     # print("level changed")
+
+    if auto_jump == True:
+        flappy.lvl_jump(game_over, level)
+        auto_jump = False
 
 def run_shop(time_now):
     global shop, shop_open, coin_count, shield_count, heart_count, total_heart_count, last_buy, buy_frequency
@@ -548,12 +553,16 @@ while True:
     
     # check for level change
     if (score % 10 == 0) and last_lvl_change < score:
+        prev_level = level
         if (level < 4) and (score <= 30):
             level += 1
         else:
             level = random.randint(1,4)
         lvl_change = True
         last_lvl_change = score
+
+        if prev_level == 2 and level != 2:
+            auto_jump = True
         # print("level changed")
     
     # using the change_level function if the level has changed

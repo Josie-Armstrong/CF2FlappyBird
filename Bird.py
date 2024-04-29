@@ -56,7 +56,7 @@ class Bird(pygame.sprite.Sprite):
         #jumping
             self.mid_air = True
             key = pygame.key.get_pressed()
-            if key[pygame.K_SPACE] and self.jumped == False and self.mid_air == True:
+            if (key[pygame.K_SPACE] and self.jumped == False and self.mid_air == True):
                 self.jumped = True
                 if level == 2:
                     self.vel = 10
@@ -82,3 +82,10 @@ class Bird(pygame.sprite.Sprite):
 
             #rotate the bird
             self.image = pygame.transform.rotate(self.images[self.index], self.vel*-2)
+
+    def lvl_jump(self, game_over, level):
+        if game_over == False:
+            if level == 2:
+                self.vel = 10
+            else:
+                self.vel = -10
